@@ -381,11 +381,11 @@ class CsvDataModule(pl.LightningDataModule):
         parser = TransformsComposer.add_specific_args(parser)
         parser.add_argument('--batch_size', default=3, type=int)
         parser.add_argument('--subsample_train', default=1, type=float)
-        parser.add_argument('--img_size', nargs='+', type=int, default=[480, 854])
-        parser.add_argument('--base_dir', type=str, default=os.environ['Dataria'])
+        parser.add_argument('--img_size', nargs='+', type=int, default=[128, 224])
+        parser.add_argument('--base_dir', type=str)
         parser.add_argument('--data_file', type=str)
         parser.add_argument('--boundaries', type=str,
-                            choices=['Strict','Periodic', 'Ignore'], default='Strict',
+                            choices=['Strict', 'Periodic', 'Ignore'], default='Periodic',
                             help='''Setup how to deal with sequence boundaries and access outside them .
                                     \n Ignore : Datamodule don't deal with boundaries.
                                     \n Strict : Prevent request outside boundaries by filtering the index.

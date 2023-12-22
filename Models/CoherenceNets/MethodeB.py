@@ -7,6 +7,7 @@ import sys, einops, torch, os
 from argparse import ArgumentParser
 from ShapeChecker import ShapeCheck
 from functools import partial
+
 class MethodeB(CoherenceNet) :
     """
     Model using as criterion the coherence of the optical flow in segmented regions :
@@ -39,7 +40,6 @@ class MethodeB(CoherenceNet) :
     def ComputeParametricFlow(self, batch) :
         """
         For a given batch compute the parametric flow with the appropriate technique.
-        This block have the responsability to ensure the constraint given in theta_grad
         Params :
             Batch containing at least :
                 pred (b, L, T(opt), I, J) : Mask proba predictions
@@ -48,15 +48,12 @@ class MethodeB(CoherenceNet) :
             Add to batch 'Theta' ( b, l, ft) to the batch with the parametric motion parameters.
             param_flos (b, l, c, T(opt), i, j) : parametric flow for each layer
         """
-        if self.theta_grad == 'Disable':
-            predv = batch['PredV'].detach()
-        elif self.theta_grad == 'Enable' :
-            predv = batch['PredV']
+        # theta_grad : Disable
+        predv = batch['PredV'].detach()
 
         batch['Theta'] = self.ComputeTheta(predv, batch['FlowV'])
 
-        if self.theta_grad == 'Disable':
-            batch['Theta'] = batch['Theta'].detach()
+        batch['Theta'] = batch['Theta'].detach()
 
         param_flos = self.ps.parametric_flows(self.grid, batch['Theta'])
         return param_flos

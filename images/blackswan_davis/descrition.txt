@@ -1,0 +1,2 @@
+Flow computed using RAFT code on the 2023-02-06 19:37:05.815094
+                {'model': '/net/serpico-fs2/emeunier//Models/RAFT/models/raft-sintel.pth', 'path': '/net/serpico-fs2/emeunier//DAVIS/JPEGImages/480p/blackswan', 'save': True, 'path_save': '/net/serpico-fs2/emeunier//DAVIS/OpticalFlow/OpticalFlowRaft/raft-sintel_gap1//480p/blackswan', 'gap': 1, 'small': False, 'mixed_precision': False, 'alternate_corr': False}

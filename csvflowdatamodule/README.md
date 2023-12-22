@@ -12,6 +12,26 @@ In order to represent that they belong to the same split they carry the same nam
 
 Fill the csv files with columns names following the standard format. Here we need to be careful because there have to be a perfect coordination between the fields in the csv and the future `request` from the user. In order to keep a good consitency all fields are written in CamelCase and in Singular. For now the fields supported are ['Flow', 'Image', 'GtMask'] but you can implement new ones by modifying "FilesLoader"
 
+### Rows :
+
+| Field                 | Description                                                  |
+| --------------------- | ------------------------------------------------------------ |
+| **Flow**              | Path to an optical flow field (.flo). Can be computed for your dataset using [RAFT] we use `raft-sintel.pth` |
+| **GtMask** (optional) | Path to the binary mask for evaluation only                  |
+| **Image** (optional)  | Path to RGB Frame for figures only                           |
+| **Sequence**          | Sequence Name, must be unique across Datasplit               |
+| **Sequence_Index**    | Relative index of the frame in the sequence                  |
+
+### Splits :
+
+| Split | Name                     |
+| ----- | ------------------------ |
+| Train | `MySuperSplit_train.csv` |
+| Val   | `MySuperSplit_val.csv`   |
+| Test  | `MySuperSplit_test.csv`  |
+
+
+
 ## Use the Data Module
 
 Only one function should be used to interact with this code :

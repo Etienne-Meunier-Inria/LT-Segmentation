@@ -1,15 +1,12 @@
-from generalunet.unet_clean import UNetClean
-from generalunet.u3D_3D import Unet3D_3D
-from generalunet.utils.ArgsUtils import argf
+from .generalunet.unet_clean import UNetClean
+from .generalunet.u3D_3D import Unet3D_3D
+from .generalunet.utils.ArgsUtils import argf
 import torch.nn as nn
 import einops
 import torch
 from utils.ExperimentalFlag import ExperimentalFlag as Ef
-from utils.ExperimentalFlag import *
-
 
 from ipdb import set_trace
-from torchvision.transforms import RandomErasing
 
 
 class FlowUnet3D(nn.Module) :
@@ -34,8 +31,6 @@ class FlowUnet3D(nn.Module) :
             input = perturb_flow_noise(input, p=0.2, max_step=3)
         if Ef.check('PerturbInputFlowNull') :
             input = perturb_flow_null(input, p=0.2, max_step=3)
-        if Ef.check('PerturbInputFlowErase') :
-            input = perturb_flow_random_erase(input, p=0.2, max_step=3)
         pred, auxs = self.model(input)
         batch.update(auxs)
         pred = torch.softmax(pred, axis=1)
@@ -55,17 +50,6 @@ def perturb_flow_null(flowv, p=0.2, max_step=3) :
         idx = get_index(flowv.shape[2], max_step)
         print(f'Perturb flow null : {idx}')
         flowv[:,:,idx] = torch.randn_like(flowv[:,:,idx])
-    return flowv
-
-def perturb_flow_random_erase(flowv, p=0.2, max_step=3) :
-    if torch.rand(1)[0] > (1-p):
-        idx = get_index(flowv.shape[2], max_step)
-        print(f'Perturb flow erase : {idx}')
-        re = RandomErasing(p=1,
-                           scale=(0.02, 0.3),
-                           ratio=(0.3, 3.3),
-                           value='random')
-        flowv[:,:,idx] = re(flowv[:,:,idx])
     return flowv
 
 def get_index(max_index, max_step) :

@@ -1,42 +1,37 @@
 import sys; from __init__ import PRP; sys.path.append(PRP)
 
-import warnings, einops, flowiz, sys, torch, math, os, numpy as np
-from argparse import ArgumentParser
-import matplotlib.pyplot as plt
-from ipdb import set_trace
-import json
-from Models.LitSegmentationModel import LitSegmentationModel
-from Callbacks import FlowPredictionLogger
-from evaluations import *
-from distance_metrics import VectorDistance
-sys.path.append('../utils')
-sys.path.append('utils')
+import warnings, einops, flowiz, sys, torch, math,\
+       os, numpy as np, json, matplotlib.pyplot as plt
+
 from ShapeChecker import ShapeCheck
-from utils.ParamShell import ParamShell
+from argparse import ArgumentParser
+
+from Models.LitSegmentationModel import LitSegmentationModel
 from Models.Regularisation import Regularisation
+
+from utils.evaluations import *
+from utils.distance_metrics import VectorDistance
+from utils.ParamShell import ParamShell
 from scipy.optimize import linear_sum_assignment
 
 class CoherenceNet(LitSegmentationModel) :
 
     def __init__(self, img_size, len_seq, binary_method,
                  coherence_loss, v_distance,
-                 theta_grad, param_model, flows_volume,
+                 param_model, flows_volume,
                  regularisation={},**kwargs) :
         super().__init__(**kwargs) # Build Lit Segmentatin Model
         self.request.add('Flow')
         self.init_param_model(img_size, len_seq, param_model)
-        self.theta_grad = theta_grad
         self.regularisation = regularisation
         self.flows_volume = flows_volume
         self.len_seq = len_seq
-        print(f'Theta Grad : {self.theta_grad}')
         self.hparams.update({'img_size':img_size,
                              'len_seq': len_seq,
                              'flows_volume' : flows_volume,
                              'binary_method': binary_method,
                              'coherence_loss': coherence_loss,
                              'v_distance':v_distance,
-                             'theta_grad':self.theta_grad,
                              'regularisation':regularisation,
                              'param_model':param_model})
         self.setup_binary_method(binary_method)
@@ -176,15 +171,6 @@ class CoherenceNet(LitSegmentationModel) :
             reg_dict[k] = l.detach()
         return regularisation_losses, reg_dict
 
-    @staticmethod
-    def init_callbacks(sample_show) :
-        """
-        Init and return a list of callbacks
-        sample show : batch of input images to test on
-        img_size : dimension of the input image in the dataset
-        """
-        return [FlowPredictionLogger(sample_show)]
-
 
     def setup_binary_method(self, binary_method) :
         """
@@ -289,16 +275,14 @@ class CoherenceNet(LitSegmentationModel) :
                             choices=['smallest', 'optimal', 'optimax', 'fair', 'exceptbiggest',
                             'linear_assignment'], default='exceptbiggest')
         parser.add_argument('--coherence_loss', help='Computation of coherence loss', type=str,
-                            choices=['pieceFit', 'pieceFitScale'], default='pieceFit')
+                            choices=['pieceFit', 'pieceFitScale'], default='pieceFitScale')
         parser.add_argument('--regularisation', type=json.loads,
                             help='Regularisation to use, provide as "{reg_name:reg_weight, reg2_name:reg2_weight, ... }')
         parser.add_argument('--v_distance', help='Vector distance metric to use in the computation', type=str,
                             choices=['squared', 'l2', 'l2_normed', 'l2_normed_alt', 'squared_normed_alt', 'l1', 'charb'],
-                            default='squared')
+                            default='l1')
         parser.add_argument('--flows_volume', nargs='+', type=str, default=['Flow-1', 'Flow', 'Flow+1'],
                             help='Flow fields to build the flow volume for coherence loss')
-        parser.add_argument('--theta_grad', help='Enable gradients and backpropagate through theta', type=str,
-                            choices=['Enable', 'Disable'], default='Disable')
         parser.add_argument('--param_model', help='Model to use to fit and compute the parametric flow', type=str, default='Affine')
         parser.add_argument('--len_seq', help='Temporal length of the sequence to use for criterion', type=int, default=3)
         return parser

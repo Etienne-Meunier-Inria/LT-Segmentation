@@ -4,7 +4,6 @@ from ShapeChecker import ShapeCheck
 from utils.Splines import interpolate
 import torch, einops, re, math, pickle
 from ipdb import set_trace
-from ExperimentalFlag import ExperimentalFlag as Ef
 from datetime import datetime
 
 class ParamShell :

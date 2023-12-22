@@ -1,3 +1,4 @@
+from Models.CoherenceNet import CoherenceNet
 from Models.CoherenceNets.MethodeB import MethodeB
 from Models.LitSegmentationModel import LitSegmentationModel
 
@@ -8,6 +9,7 @@ from pytorch_lightning.loggers import WandbLogger
 from pathlib import Path
 from utils.ExperimentalFlag import ExperimentalFlag as Ef
 from utils.ExperimentalFlag import *
+from utils.Callbacks import ResultsLogger
 
 import wandb, yaml, os, sys, torch, json
 
@@ -16,7 +18,7 @@ import wandb, yaml, os, sys, torch, json
 # ------------
 
 def ArgParser() :
-    exp_flags = yaml.safe_load(open('ExperimentalFlags.yaml'))
+    exp_flags = yaml.safe_load(open('utils/ExperimentalFlags.yaml'))
     parser = ArgumentParser()
     parser.add_argument('--seed', default=123, type=int)
     parser.add_argument('--experimental_flag', default = [],
@@ -55,6 +57,8 @@ def get_model(args) :
     return model
 
 def main(args) :
+    Ef.set(args.experimental_flag)
+
     pl.seed_everything(args.seed)
     if torch.cuda.is_available() :
         args.gpus = 1
@@ -74,23 +78,23 @@ def main(args) :
     # ------------
     # logger and callbacks
     # ------------
-    logger = pl.loggers.CSVLogger(args.path_save_model)
+    logger = pl.loggers.CSVLogger(args.save_dir)
 
 
     # ------------
     # log model
     # ------------
 
-    path = Path(args.path_save_model+'/checkpoints/')
-    path.mkdir(exist_ok=True)
+    path = Path(args.save_dir+'/checkpoints/')
+    path.mkdir(parents=True, exist_ok=True)
     # We save the model with the lowest validation loss.
-    args.callbacks = [pl.callbacks.ModelCheckpoint(args.path_save_model+'/checkpoints/',
+    args.callbacks = [pl.callbacks.ModelCheckpoint(args.save_dir+'/checkpoints/',
                                                    monitor='val/loss',
                                                    filename='{epoch}-epoch_val_loss:{val/loss:.5f}',
                                                    mode='min',
                                                    auto_insert_metric_name=False,
                                                    save_top_k=1),
-                      ResultsLogger(args.path_save_model+'/results.csv')]
+                      ResultsLogger(args.save_dir+'/results.csv')]
 
 
     # ------------
@@ -101,8 +105,7 @@ def main(args) :
     print(args)
     print('\n\n\n')
 
-    trainer = pl.Trainer.from_argparse_args(args)
-    trainer.logger.log_hyperparams(args)
+    trainer = pl.Trainer.from_argparse_args(args,  logger=logger)
     trainer.tune(model, dm)
     trainer.fit(model, dm)
 

@@ -1,14 +1,8 @@
 import pytorch_lightning as pl
 from ipdb import set_trace
 from Models.Backbones.FlowUnet3D import FlowUnet3D
-from Models.Backbones.FlowUnet3DFake import FlowUnet3DFake
-from Models.Backbones.ImageUnet3D import ImageUnet3D
-from Models.Backbones.ImageUnet2D import ImageUnet2D
-from Models.Backbones.ImageDeepLab2D import ImageDeepLab2D
 from Models.Backbones.generalunet.u3D_3D import Unet3D_3D
-from Models.Backbones.generalunet.u2D_2D import Unet2D_2D
 from Models.Backbones.generalunet.u3D_3D_MaskFormer import MaskFormer3D
-from Models.Backbones.FakeModel import FakeModel
 
 from Models.Backbones.generalunet.unet_clean import UNetClean
 from argparse import ArgumentParser
@@ -44,6 +38,6 @@ class LitBackbone(pl.LightningModule):
         parser = ArgumentParser(parents=[parent_parser], add_help=False)
         parser = UNetClean.add_specific_args(parser)
         parser = MaskFormer3D.add_specific_args(parser)
-        parser.add_argument('--backbone', '-bb', type=str, choices=['FlowUnet3D', 'MaskFormer3D'], default='FlowUnet3D')
+        parser.add_argument('--backbone', '-bb', type=str, choices=['FlowUnet3D', 'MaskFormer3D'], default='MaskFormer3D')
         parser.add_argument('--inputs', nargs='+', type=str, default=['Flow-1', 'Flow', 'Flow+1'])
         return parser

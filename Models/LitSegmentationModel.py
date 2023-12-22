@@ -4,7 +4,7 @@ from argparse import Namespace, ArgumentParser
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 from pathlib import Path
-from evaluations import *
+from utils.evaluations import *
 from Models.LitBackbone import LitBackbone
 from functools import partial
 
@@ -141,11 +141,11 @@ class LitSegmentationModel(pl.LightningModule) :
     def add_specific_args(parent_parser):
         parser = ArgumentParser(parents=[parent_parser], add_help=False)
         parser = LitBackbone.add_specific_args(parser)
-        parser.add_argument('--nAffineMasks', '-L', type=int, default=2)
+        parser.add_argument('--nAffineMasks', '-L', type=int, default=4)
         parser.add_argument('--model_type', '-mt', type=str, choices=['coherence_B'], default='coherence_B')
         parser.add_argument('--optim.name', type=str, choices=['Adam'], default='Adam')
-        parser.add_argument('--optim.schedule', type=str, choices=['StepLR', 'CyclicLR', 'WarmupDecay'], default='')
-        parser.add_argument('--optim.lr', type=float, default=1e-2)
+        parser.add_argument('--optim.schedule', type=str, choices=['StepLR', 'CyclicLR', 'WarmupDecay'], default='WarmupDecay')
+        parser.add_argument('--optim.lr', type=float, default=1e-4)
         parser.add_argument('--optim.weight_decay', type=float, default=0)
         parser.add_argument('--finetune', type=str, default='none')
         return parser
