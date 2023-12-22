@@ -1,0 +1,3 @@
+[submodule "Models/Backbones/generalunet"]
+	path = Models/Backbones/generalunet
+	url = https://github.com/Etienne-Meunier-Inria/GeneralUnet
