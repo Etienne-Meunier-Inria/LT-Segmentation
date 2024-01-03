@@ -34,7 +34,7 @@ In order to evaluate motion segmentation on VOS datasets we need to select segme
 
    ```bash
    python3 scripts/proba_to_color.py --data_file DAVIS17_D17Split\
-   								  --base_dir $Dataria
+   								  --base_dir /path/to/data/folder #Path to the datafolder (DataSplit contains relative paths)
                                      --duplicate_last\
                                      --model_dir SavedModels/YourModel
                                      -cs -1
@@ -48,7 +48,7 @@ In order to evaluate motion segmentation on VOS datasets we need to select segme
 
 ```bash
 python3 scripts/proba_to_color.py --data_file FBMSclean_FBMSSplit\
-								  --base_dir $Dataria
+								  --base_dir /path/to/data/folder #Path to the datafolder (DataSplit contains relative paths)
                                   --duplicate_last\
                                   --model_dir SavedModels/YourModel
                                   -cs -1
