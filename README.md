@@ -10,7 +10,7 @@ Long-term flow segmentation is a code to segment a sequence of flow fields in on
 
 ## Inference
 
-- For a simple inference process you can check in notebook : [Simple Segmentation Example](Notebooks/Simple Segmentation Example.ipynb)
+- For a simple inference process you can check in notebook : [Simple Segmentation Example](Notebooks/Simple-Segmentation-Example.ipynb)
 - For an inference process using csvflowdatamodule you can check the notebook : [Inference](Notebooks/Inference.ipynb)
 
 In order to do inference on a full dataset you can use the scripts in (`scripts/pred_extraction.py`) :
