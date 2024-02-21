@@ -85,7 +85,7 @@ Evaluation for all datasets are described in [evaluation](evaluation/README.md).
 
 You can find results, evaluations and pre-trained weights here :
 
-[[RESULTS](https://gitlab.inria.fr/emeunier/st-space-time-flow-segmentation-data)]
+[[RESULTS]([https://gitlab.inria.fr/emeunier/st-space-time-flow-segmentation-data](https://gitlab.inria.fr/emeunier/long-term-segmentation-data/)]
 
 You will also find timing of our method on ` P100 Gpu` with varying input size and number of masks in  `"306h8xd2/Results_Timer_P100.pdf"` file.
 
